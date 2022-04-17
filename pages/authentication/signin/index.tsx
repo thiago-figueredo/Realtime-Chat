@@ -27,7 +27,7 @@ export default function SigninComponent() {
 
       <Button type="submit">Sign in</Button>
 
-      <ContainerRow>
+      <ContainerRow fontSize="small">
         <strong>Don&#8217;t have a Account ? </strong>
         <Link href={ signUpURL } passHref>
           <StyledLink margin="0 0 0 .5rem" fontWeight="bold">

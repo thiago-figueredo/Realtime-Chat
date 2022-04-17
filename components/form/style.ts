@@ -10,12 +10,21 @@ export const Form = styled.form`
   grid-gap: 1rem;
 `
 
+type InputProps = {
+  readonly padding?: string
+  readonly outline?: string
+  readonly margin?: string
+  readonly width?: string
+  readonly minWidth?: string
+}
+
 export const Input = styled.input`
-  outline: none;
-  padding: .5rem;
+  outline: ${({ outline }: InputProps) => outline || "none"};
+  padding: ${({ padding }: InputProps) => padding || "0"};
+  margin: ${({ margin }: InputProps) => margin || "0"};
   color: #202020;
-  width: 100%;
-  min-width: 11.25rem;
+  width: ${({ width }: InputProps) => width || "100%"};
+  min-width: ${({ minWidth }: InputProps) => minWidth || "100%"};
   font-size: medium;
   font-weight: 600;
 `

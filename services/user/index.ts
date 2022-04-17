@@ -3,6 +3,7 @@ import axios from "axios"
 export interface IUser {
   readonly username: string
   readonly password: string
+  readonly avatar?: string
 }
 
 interface IUserService {
@@ -10,7 +11,11 @@ interface IUserService {
 }
 
 interface ISignUpResponse {
-  readonly isSignedUp: boolean
+  readonly signedUp: boolean
+}
+
+interface IAxiosResponse<T> {
+  readonly data: T
 }
 
 export default class UserService implements IUserService {
@@ -20,8 +25,8 @@ export default class UserService implements IUserService {
     this.url = url
   }
 
-  async signUp(user: IUser) {
-    const { isSignedUp } = await axios.post<IUser, ISignUpResponse>(this.url, user)
-    if (!isSignedUp) throw new Error("User already exists")
+  async signUp(user: IUser): Promise<ISignUpResponse> {
+    const { data } = await axios.post<IUser, IAxiosResponse<ISignUpResponse>>(this.url, user)
+    return data
   }
 }

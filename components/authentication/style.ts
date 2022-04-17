@@ -15,7 +15,6 @@ export const Authentication = styled.div`
   justify-content: center;
   grid-gap: 1rem;
   padding: 2rem;
-  color: #202020;
 `
 
 interface IStyledLinkProps {
