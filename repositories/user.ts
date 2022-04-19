@@ -1,26 +1,15 @@
-import { Sequelize } from "sequelize"
+import { PrismaClient } from "@prisma/client"
 import { IUser } from "../services/user"
 
 export default class UserRepository {
-  private readonly user: IUser
+  static prisma = new PrismaClient()
 
-  constructor(user: IUser) {
-    this.user = user
-  }
-
-  async create(user: IUser) {
-    const { DB_NAME  } = process.env
-    console.log(DB_NAME)
-    // const sequelize = new Sequelize(
-
-    //   // "realtime_chat_users",
-    //   // "postgres",
-    //   // "thiagolindoflamengo010",
-    //   {
-    //     dialect: "postgres",
-    //     host: "localhost",
-    //     port: 5432
-    //   }
-    // )
+  static async create(user: IUser) {
+    return await this.prisma.user.create({ data: { ...user } })
   } 
+
+  static findById(id: string) {
+    const user = this.prisma.user.findUnique({ where: { id } })
+    return user 
+  }
 }

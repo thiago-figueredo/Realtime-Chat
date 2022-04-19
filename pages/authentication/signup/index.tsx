@@ -1,19 +1,16 @@
-import { Form, Input, Button } from "../../../components/form/style"
+import { ContainerRow, Input, Button, Form, Strong, H1 } from "../../../styles/globals"
+import { Authentication, StyledLink } from "../style"
 import { useRef, FormEvent } from "react"
+import { IUserSignedUpResponse } from "../../api/signup"
+import { v4 as uuidv4 } from "uuid"
+import { apiSignUpUrl } from "../../api/signup"
 import { useRouter } from "next/router"
-import { Authentication, StyledLink } from "../../../components/authentication/style"
-import { ContainerRow } from "../../../styles/globals"
 import { signInURL } from "../signin"
-import UserService, { IUser } from "../../../services/user"
+import { IUser } from "../../../services/user"
 import Link from "next/link"
 
-export const signUpURL = "/authentication/signup"
-export const minUsernameLength = 3
-export const minPasswordLength = 10
-const apiSignUpUrl = "http://localhost:3000/api/signup"
-
 export default function SignupComponent() {
-  const usernameRef = useRef<HTMLInputElement>(null)
+  const nameRef = useRef<HTMLInputElement>(null)
   const passwordRef = useRef<HTMLInputElement>(null)
   const avatarRef = useRef<HTMLInputElement>(null)
   const router = useRouter()
@@ -22,35 +19,41 @@ export default function SignupComponent() {
     event.preventDefault()
 
     const user: IUser = {
-      username: usernameRef.current!.value,
+      id: uuidv4(),
+      name: nameRef.current!.value,
       password: passwordRef.current!.value,
       avatar: avatarRef.current!.value
     }
-    
-    const userService = new UserService(apiSignUpUrl)
 
-    try {
-      const { signedUp } = await userService.signUp(user) 
+    const response = await fetch(apiSignUpUrl, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(user),
+    })
 
-      if (!signedUp) return router.push("/authentication/signup/invalid")
-      router.push("/chat")
-    } catch {
-      router.push("/authentication/signup/invalid")
-    }
+    const { signedUp, message }: IUserSignedUpResponse = await response.json()
+
+    if (!signedUp) 
+      return router.push(`/authentication/signup/invalid?message=${message}`)
+
+    router.push("/chat") 
   }
 
   return <Authentication>
     <Form onSubmit={ signUpUser }>
-      <h1>Sign Up</h1>
+      <H1>Sign Up</H1>
+
       <Input 
+        padding="0.3rem"
         type="text" 
         id="user-name"
         placeholder="Username" 
         maxLength={ 50 } 
-        ref={ usernameRef } 
+        ref={ nameRef } 
       /> 
 
       <Input 
+        padding="0.3rem"
         ref={ passwordRef } 
         id="user-password"
         type="password" 
@@ -64,12 +67,13 @@ export default function SignupComponent() {
         type="text" 
         placeholder="Avatar (Optional)" 
         maxLength={ 50 }
+        padding="0.3rem"
       /> 
 
       <Button type="submit">Sign Up</Button>
 
       <ContainerRow fontSize="small">
-        <strong>Already Signed up ?</strong>
+        <Strong>Already Signed up ?</Strong>
         <Link href={ signInURL } passHref>
           <StyledLink margin="0 0 0 .5rem" fontWeight="bold">
             Sign in

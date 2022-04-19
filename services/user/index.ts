@@ -1,32 +1,19 @@
-import axios from "axios"
+import { minNameLength, minPasswordLength } from "../../pages/api/signup"
+import UserRepository from "../../repositories/user"
 
 export interface IUser {
-  readonly username: string
+  readonly id: string
+  readonly name: string
   readonly password: string
-  readonly avatar?: string
+  readonly avatar?: string 
 }
 
-interface IUserService {
-  readonly signUp: (user: IUser) => void
-}
-
-interface ISignUpResponse {
-  readonly signedUp: boolean
-}
-
-interface IAxiosResponse<T> {
-  readonly data: T
-}
-
-export default class UserService implements IUserService {
-  readonly url: string
-
-  constructor(url: string) {
-    this.url = url
+export default class UserService {
+  static validate({ name, password }: IUser): boolean {
+    return name.length > minNameLength && password.length > minPasswordLength
   }
 
-  async signUp(user: IUser): Promise<ISignUpResponse> {
-    const { data } = await axios.post<IUser, IAxiosResponse<ISignUpResponse>>(this.url, user)
-    return data
+  static findById(id: string) {
+    return UserRepository.findById(id)
   }
 }

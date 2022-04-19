@@ -20,3 +20,7 @@
 h1 {
   text-align: center;
 }
+
+button:hover, svg:hover {
+  opacity: 1;
+}
